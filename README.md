@@ -6,6 +6,13 @@ A tool for tracking drops from combat kills in Brighter Shores in order to perfo
 # Requirements
 - This application requires python 3 to run.
   - Python can be downloaded from here: https://www.python.org/downloads/
+
+# Included Files
+- app.pyw
+  - This is the main python application
+- drop_file.csv
+  - This is a my sample drop file I'm providing
+  - Since there isn't a place to give credit for kills yet I ask that you use your own file after getting the feel for how the application works
  
 # Inteded Use
 - Clone/download the repo from github to your device
@@ -22,3 +29,18 @@ A tool for tracking drops from combat kills in Brighter Shores in order to perfo
 - When an enemy doesn't drop anything the item category will default to "None"
 - If the enemy has an item drop with an amount I simply write "Drop x(amount"
   - So for the Toad drop I would write **Squishy Toad's Eye x4** since it always drops in sets of four
+
+# Contributing
+- This section will cover contribution requirements for code contributors
+- Code editing is very simple with python. In order to edit all you need to do is open app.pyw in any text editor of your choosing.
+  
+## Mission Statement
+- The goal of this program is to make tracking kill data as easy as possible
+- Thus the focus of the application is foremost on useability and file compatibility
+
+## New Data Requirements
+- New data columns can be added, but they need to be opt-in and the default option needs to be empty data. This is so that data sifting libraries like pandas can filter properly.
+- Take tracking dropped weapon stats and level
+  - Some people may want to track this. Others may not.
+  - We want people tracking all the data (eg. weapon drop and ranks) along with the more detailed data to be able to be used in rarity calculation
+  - However if someone chooses not to opt-in to the more fine grained data collection their data must be empty in those columns so it can easily be filtered out as "Null" or "Not Tracked" rathan than "None" which is a tracked nothing.
