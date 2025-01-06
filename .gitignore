@@ -171,5 +171,5 @@ cython_debug/
 .pypirc
 
 #CSV and Data Files
-.csv
+*.csv
 !sample_drop_file/drop_file.csv
