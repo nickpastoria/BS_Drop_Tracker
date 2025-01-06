@@ -169,3 +169,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+#CSV and Data Files
+.csv
+!sample_drop_file/drop_file.csv
