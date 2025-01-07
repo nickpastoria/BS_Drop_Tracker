@@ -44,3 +44,10 @@ A tool for tracking drops from combat kills in Brighter Shores in order to perfo
   - Some people may want to track this. Others may not.
   - We want people tracking all the data (eg. weapon drop and ranks) along with the more detailed data to be able to be used in rarity calculation
   - However if someone chooses not to opt-in to the more fine grained data collection their data must be empty in those columns so it can easily be filtered out as "Null" or "Not Tracked" rathan than "None" which is a tracked nothing.
+
+# Roadmap
+Future additions to the program go here
+- Bug: Current list doesn't reset on load
+- Reset untuned state after log
+- Set "None" categories to "None" on load
+- Save data after every log
