@@ -51,3 +51,4 @@ Future additions to the program go here
 - Reset untuned state after log
 - Set "None" categories to "None" on load
 - Save data after every log
+- Add a data column for player attribution and ask for it on launch
