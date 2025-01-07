@@ -47,8 +47,12 @@ A tool for tracking drops from combat kills in Brighter Shores in order to perfo
 
 # Roadmap
 Future additions to the program go here
-- Bug: Current list doesn't reset on load
-- Reset untuned state after log
 - Set "None" categories to "None" on load
+
+# Changelog
+## 07 January 2025
+### Bug Fixes
+- Reset untuned state after log
+### New Features
 - Save data after every log
 - Add a data column for player attribution and ask for it on launch
