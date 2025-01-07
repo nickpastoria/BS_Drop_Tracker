@@ -6,6 +6,7 @@ from tkinter import ttk, filedialog
 import csv
 import json
 from datetime import datetime
+from collections import Counter
 
 class DropLoggerApp:
     def __init__(self, root):
@@ -14,12 +15,16 @@ class DropLoggerApp:
         self.root.attributes('-topmost', 1)
 
         self.data = []
+        self.drop_counter = Counter()
 
         # Dropdown data sources
         self.player_classes = set()
         self.enemy_names = set()
         self.item_drops = set()
         self.item_rarities = set()
+
+        # Ask for player attribution
+        self.player_attribution = tk.simpledialog.askstring("Player Attribution", "Enter your player name:")
 
         # UI Elements
         self.create_widgets()
@@ -39,6 +44,7 @@ class DropLoggerApp:
         self.enemy_name_var = tk.StringVar()
         self.enemy_name_combobox = ttk.Combobox(frame, textvariable=self.enemy_name_var, values=sorted(self.enemy_names))
         self.enemy_name_combobox.grid(row=1, column=1, padx=5, pady=5)
+        self.enemy_name_combobox.bind("<<ComboboxSelected>>", self.update_default_item_drop)
 
         # Enemy Level
         ttk.Label(frame, text="Enemy Level:").grid(row=2, column=0, padx=5, pady=5)
@@ -80,7 +86,7 @@ class DropLoggerApp:
         self.log_count_label.grid(row=7, column=1, padx=5, pady=5)
 
         # Data Display
-        self.tree = ttk.Treeview(self.root, columns=("Time", "Player Class", "Enemy Name", "Enemy Level", "Item Drop", "Item Rarity", "Untuned"), show="headings")
+        self.tree = ttk.Treeview(self.root, columns=("Time", "Player Attribution", "Player Class", "Enemy Name", "Enemy Level", "Item Drop", "Item Rarity", "Untuned"), show="headings")
         for col in self.tree['columns']:
             self.tree.heading(col, text=col)
             self.tree.column(col, width=100)
@@ -96,8 +102,12 @@ class DropLoggerApp:
         untuned = self.untuned_var.get()
 
         # Append data
-        entry = (current_time, player_class, enemy_name, enemy_level, item_drop, item_rarity, untuned)
+        entry = (current_time, self.player_attribution, player_class, enemy_name, enemy_level, item_drop, item_rarity, untuned)
         self.data.append(entry)
+        self.drop_counter[(enemy_name, item_drop)] += 1
+
+        # Save data to file
+        self.save_data()
 
         # Update dropdown options
         if player_class and player_class not in self.player_classes:
@@ -123,8 +133,9 @@ class DropLoggerApp:
         self.tree.yview_moveto(1.0)
 
         # Reset specific fields
-        self.item_drop_var.set("None")
+        self.update_default_item_drop(entry)
         self.item_rarity_var.set("None")
+        self.untuned_var.set(False)
 
         # Update log count
         self.log_count_var.set(f"Total Logs: {len(self.data)}")
@@ -142,7 +153,7 @@ class DropLoggerApp:
     def export_to_csv(self, file_path):
         with open(file_path, "w", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow(["Time", "Player Class", "Enemy Name", "Enemy Level", "Item Drop", "Item Rarity", "Untuned"])
+            writer.writerow(["Time", "Player Attribution", "Player Class", "Enemy Name", "Enemy Level", "Item Drop", "Item Rarity", "Untuned"])
             writer.writerows(self.data)
 
     def export_to_json(self, file_path):
@@ -154,6 +165,11 @@ class DropLoggerApp:
         file_path = filedialog.askopenfilename(filetypes=filetypes)
 
         if file_path:
+            self.data.clear()
+            self.drop_counter.clear()
+            for item in self.tree.get_children():
+                self.tree.delete(item)
+
             if file_path.endswith(".csv"):
                 self.load_from_csv(file_path)
             elif file_path.endswith(".json"):
@@ -167,6 +183,7 @@ class DropLoggerApp:
                 self.data.append(tuple(row))
                 self.tree.insert("", "end", values=row)
                 self.update_dropdowns_from_entry(row)
+                self.drop_counter[(row[3], row[5])] += 1
         self.log_count_var.set(f"Total Logs: {len(self.data)}")
 
     def load_from_json(self, file_path):
@@ -176,10 +193,11 @@ class DropLoggerApp:
                 self.data.append(tuple(entry))
                 self.tree.insert("", "end", values=entry)
                 self.update_dropdowns_from_entry(entry)
+                self.drop_counter[(entry[3], entry[5])] += 1
         self.log_count_var.set(f"Total Logs: {len(self.data)}")
 
     def update_dropdowns_from_entry(self, entry):
-        _, player_class, enemy_name, _, item_drop, item_rarity, _ = entry
+        _, _, player_class, enemy_name, _, item_drop, item_rarity, _ = entry
 
         if player_class and player_class not in self.player_classes:
             self.player_classes.add(player_class)
@@ -196,6 +214,18 @@ class DropLoggerApp:
         if item_rarity and item_rarity not in self.item_rarities:
             self.item_rarities.add(item_rarity)
             self.item_rarity_combobox["values"] = sorted(self.item_rarities)
+
+    def update_default_item_drop(self, event):
+        selected_enemy = self.enemy_name_var.get()
+        if selected_enemy:
+            most_common_item = max((item for (enemy, item) in self.drop_counter.keys() if enemy == selected_enemy),
+                                   key=lambda i: self.drop_counter[(selected_enemy, i)],
+                                   default="None")
+            self.item_drop_var.set(most_common_item)
+
+    def save_data(self):
+        with open("auto_saved_data.json", "w") as file:
+            json.dump(self.data, file, indent=4)
 
 if __name__ == "__main__":
     root = tk.Tk()
