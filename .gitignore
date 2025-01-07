@@ -172,4 +172,5 @@ cython_debug/
 
 #CSV and Data Files
 *.csv
+*.json
 !sample_drop_file/drop_file.csv
