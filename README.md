@@ -46,8 +46,13 @@ A tool for tracking drops from combat kills in Brighter Shores in order to perfo
   - However if someone chooses not to opt-in to the more fine grained data collection their data must be empty in those columns so it can easily be filtered out as "Null" or "Not Tracked" rathan than "None" which is a tracked nothing.
 
 # Roadmap
-Future additions to the program go here
+## Future additions to the program go here
 - Set "None" categories to "None" on load
+- Scroll to bottom on load
+- Add data category for kill episode
+- Add data category for weapon/armor class based on most chosen option for that item
+- Fix bug where app doesn't record data ??!?!?!?
+- Move Drop rarity before drop name to match the way its written in-game
 
 # Changelog
 ## 07 January 2025
